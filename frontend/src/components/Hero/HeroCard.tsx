@@ -1,8 +1,8 @@
-interface HeroCardProps {
+type HeroCardProps = {
   icon: React.ReactNode;
   title: string;
   description: string;
-}
+};
 
 function HeroCard({ icon, title, description }: HeroCardProps) {
   return (

@@ -1,15 +1,17 @@
 import HeroCard from './HeroCard';
 import { Shield, Brain, Zap, Lock, Target, TriangleAlert } from 'lucide-react';
 
-function Hero() {
+function HeroSection() {
   return (
-    <section className="markup-layout pt-10 md:pt-15">
-      <div className="flex items-center justify-center gap-1">
-        <Shield className="h-7 w-7 md:h-10 md:w-10" />
-        <h1 className="text-2xl font-bold uppercase md:text-5xl">Антимошенник</h1>
+    <section className="markup-layout section-spacing">
+      <div className="md: flex flex-col items-center justify-center gap-1 md:flex-row">
+        <Shield className="h-10 w-10 md:h-12 md:w-12" />
+        <h1 className="text-3xl font-bold uppercase md:text-6xl">Антимошенник</h1>
       </div>
 
-      <p className="text-center text-sm font-semibold md:text-3xl">Проверка сообщений на мошенничество</p>
+      <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-gray-300 md:text-lg">
+        AI-сервис для анализа подозрительных сообщений и выявления признаков мошенничества
+      </p>
 
       <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 pt-5 md:grid-cols-4 md:gap-4">
         <HeroCard icon={<Brain className="h-5 w-5 md:h-8 md:w-8" />} title="AI-Анализ" description="Умная система" />
@@ -30,4 +32,4 @@ function Hero() {
   );
 }
 
-export default Hero;
+export default HeroSection;
