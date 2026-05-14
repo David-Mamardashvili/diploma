@@ -12,10 +12,10 @@ function ScanBackButton({ onClick, disabled = false }: ScanBackButtonProps) {
       aria-label="Назад"
       onClick={onClick}
       disabled={disabled}
-      className={`group rounded-2xl border border-[var(--border)] bg-[var(--element-background)] p-3 focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none ${
+      className={`group rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)] p-3 focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none ${
         disabled
           ? 'cursor-not-allowed opacity-40'
-          : 'cursor-pointer transition-colors duration-300 hover:bg-[var(--hover)]'
+          : 'cursor-pointer transition-colors duration-300 hover:bg-[var(--element-hover-color)]'
       }`}
     >
       <ArrowLeft

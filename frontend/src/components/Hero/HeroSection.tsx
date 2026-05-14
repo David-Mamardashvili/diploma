@@ -9,7 +9,7 @@ function HeroSection() {
         <h1 className="text-3xl font-bold uppercase md:text-6xl">Антимошенник</h1>
       </div>
 
-      <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-gray-300 md:text-lg">
+      <p className="text-text-[var(--secondary-heading-color)] mx-auto max-w-2xl text-center text-sm leading-relaxed md:text-lg">
         AI-сервис для анализа подозрительных сообщений и выявления признаков мошенничества
       </p>
 

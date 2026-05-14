@@ -1,10 +1,41 @@
 @import "tailwindcss";
 
 :root {
-    --background: #000411;
-    --element-background: rgba(0, 0, 0, 0.5);
-    --hover: rgba(59, 130, 246, 0.3);
-    --border: rgba(255, 255, 255, 0.2);
+    --page-background-color: rgb(255, 250, 238);
+    --cover-image: url("./assets/misis-cover-light.webp");
+    --main-color: rgb(0, 4, 17);
+    --main-color-10: rgba(0, 4, 17, 0.1);
+    --main-color-20: rgba(0, 4, 17, 0.2);
+    --main-color-60: rgba(0, 4, 17, 0.6);
+    --element-background-color: rgba(255, 255, 255, 0.48);
+    --element-hover-color: rgba(234, 88, 12, 0.14);
+    --secondary-heading-color: rgb(31, 41, 55);
+    --secondary-text-color: rgb(100, 116, 139);
+    --text-hover-color: rgb(234, 88, 12);
+    --heading-gradient-from: rgb(251, 191, 36);
+    --heading-gradient-via: rgb(249, 115, 22);
+    --heading-gradient-to: rgb(234, 88, 12);
+    --divider-gradient-color: rgba(0, 4, 17, 0.12);
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --page-background-color: rgb(0, 4, 17);
+        --cover-image: url("./assets/misis-cover-dark.webp");
+        --main-color: rgb(255, 255, 255);
+        --main-color-10: rgba(255, 255, 255, 0.1);
+        --main-color-20: rgba(255, 255, 255, 0.2);
+        --main-color-60: rgba(255, 255, 255, 0.6);
+        --element-background-color: rgba(0, 0, 0, 0.5);
+        --element-hover-color: rgba(59, 130, 246, 0.3);
+        --secondary-heading-color: rgb(209, 213, 219);
+        --secondary-text-color: rgb(156, 163, 175);
+        --text-hover-color: rgb(37, 99, 235);
+        --heading-gradient-from: rgb(125, 211, 252);
+        --heading-gradient-via: rgb(96, 165, 250);
+        --heading-gradient-to: rgb(37, 99, 235);
+        --divider-gradient-color: rgba(255, 255, 255, 0.2);
+    }
 }
 
 html {
@@ -12,8 +43,8 @@ html {
 }
 
 body {
-    background-color: var(--background);
-    color:white;
+    background-color: var(--page-background-color);
+    color: var(--main-color);
 }
 
 body::before {
@@ -24,8 +55,11 @@ body::before {
     z-index: -1;
     width: 65%;
     aspect-ratio: 1086 / 1230;
-    background-image: url("./assets/misis-cover.webp");
+    background-image: var(--cover-image);
     background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    pointer-events: none;
 }
 
 .markup-layout {

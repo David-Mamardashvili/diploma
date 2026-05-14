@@ -1,8 +1,8 @@
 function Header() {
   const navItems = [
-    { label: 'Как работает', href: '#how-it-works' },
-    { label: 'Преимущества', href: '#advantages' },
-    { label: 'FAQ', href: '#faq' },
+    // { label: 'Как работает', href: '#how-it-works' },
+    // { label: 'Преимущества', href: '#advantages' },
+    // { label: 'FAQ', href: '#faq' },
     { label: 'Начать проверку', href: '#scan' },
   ];
 
@@ -13,7 +13,7 @@ function Header() {
           <a
             key={item.href}
             href={item.href}
-            className="transition-colors duration-300 hover:text-blue-600 focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none"
+            className="transition-colors duration-300 hover:text-[var(--text-hover-color)] focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none"
           >
             {item.label}
           </a>

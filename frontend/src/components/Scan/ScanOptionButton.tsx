@@ -8,7 +8,7 @@ function ScanOptionButton({ children, onClick }: ScanOptionButtonProps) {
     <button
       type="button"
       onClick={onClick}
-      className="cursor-pointer rounded-2xl border border-[var(--border)] bg-[var(--element-background)] py-4 transition-colors duration-300 hover:bg-[var(--hover)] focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none"
+      className="cursor-pointer rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)] py-4 transition-colors duration-300 hover:bg-[var(--element-hover-color)] focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none"
     >
       <span className="text-sm md:text-base">{children}</span>
     </button>

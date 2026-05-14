@@ -127,7 +127,13 @@ function ScanSection() {
       <h2 className="text-center text-3xl font-bold md:text-6xl">
         Проверьте сообщение
         <br />
-        <span className="bg-gradient-to-r from-sky-300 via-blue-400 to-blue-600 bg-clip-text text-transparent">
+        <span
+          className="bg-clip-text text-transparent"
+          style={{
+            backgroundImage:
+              'linear-gradient(to right, var(--heading-gradient-from), var(--heading-gradient-via), var(--heading-gradient-to))',
+          }}
+        >
           на мошенничество
         </span>
         <br />с помощью AI
@@ -136,12 +142,29 @@ function ScanSection() {
       {!channel && (
         <div className="mx-auto max-w-xl pt-5">
           <div className="flex flex-col gap-[14px]">
-            <div className="mx-auto h-[2px] w-40 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            <div className="mx-auto h-[2px] w-40 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            <div className="mx-auto h-[2px] w-40 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <div
+              className="mx-auto h-[2px] w-40"
+              style={{
+                background: 'linear-gradient(to right, transparent, var(--divider-gradient-color), transparent)',
+              }}
+            />
+
+            <div
+              className="mx-auto h-[2px] w-40"
+              style={{
+                background: 'linear-gradient(to right, transparent, var(--divider-gradient-color), transparent)',
+              }}
+            />
+
+            <div
+              className="mx-auto h-[2px] w-40"
+              style={{
+                background: 'linear-gradient(to right, transparent, var(--divider-gradient-color), transparent)',
+              }}
+            />
           </div>
 
-          <p className="pt-5 font-semibold md:text-xl">От кого вы получили это сообщение?</p>
+          <p className="pt-5 font-semibold md:text-xl">Откуда вы получили это сообщение?</p>
 
           <div className="flex flex-col gap-3 pt-2">
             {channels.map((channel) => (
@@ -186,21 +209,21 @@ function ScanSection() {
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               placeholder="Например: Ваша карта заблокирована. Срочно перейдите по ссылке..."
-              className="min-h-40 resize-none rounded-2xl border border-[var(--border)] bg-[var(--element-background)] p-4 transition-colors duration-300 outline-none placeholder:text-sm focus:border-white focus-visible:outline-none md:placeholder:text-base"
+              className="min-h-40 resize-none rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)] p-4 transition-colors duration-300 outline-none placeholder:text-sm focus:border-[var(--main-color)] focus-visible:outline-none md:placeholder:text-base"
             />
             <button
               type="button"
               disabled={!message.trim() || isLoading}
               onClick={handleScanSituation}
-              className={`flex items-center justify-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--element-background)] py-4 focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none ${
+              className={`flex items-center justify-center gap-3 rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)] py-4 focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none ${
                 !message.trim() || isLoading
                   ? 'cursor-not-allowed opacity-40'
-                  : 'cursor-pointer transition-colors duration-300 hover:bg-[var(--hover)]'
+                  : 'cursor-pointer transition-colors duration-300 hover:bg-[var(--element-hover-color)]'
               }`}
             >
               {isLoading ? (
                 <>
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--border)] border-t-white" />
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--main-color-20)] border-t-[var(--main-color)]" />
 
                   <span className="text-sm md:text-base">Проверяем...</span>
                 </>
@@ -215,14 +238,14 @@ function ScanSection() {
       {result && !isLoading && (
         <div className="mx-auto max-w-xl pt-5">
           <div className="flex flex-col gap-3">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--element-background)] p-4">
+            <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)] p-4">
               <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between gap-4">
                   <span className="font-bold md:text-xl">{result.riskLevel}</span>
                   <span className="text-2xl font-bold md:text-5xl">{result.riskPercentage}%</span>
                 </div>
 
-                <div className="w-full rounded-full border border-[var(--border)]">
+                <div className="w-full rounded-full border border-[var(--main-color-20)]">
                   <div
                     className={`h-4 rounded-full ${
                       result.riskLevel === 'Высокий риск'
@@ -237,12 +260,12 @@ function ScanSection() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--element-background)]">
-              <div className="border-b border-white/10 px-4 py-3">
+            <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
+              <div className="border-b border-[var(--main-color-10)] px-4 py-3">
                 <h3 className="font-semibold md:text-xl">Обнаруженные признаки</h3>
               </div>
 
-              <div className="flex flex-col divide-y divide-white/10">
+              <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
                 {result.riskFactors.map((riskFactor) => (
                   <div key={riskFactor} className="px-4 py-4">
                     <p className="text-sm leading-relaxed sm:text-base">{riskFactor}</p>
@@ -251,12 +274,12 @@ function ScanSection() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--element-background)]">
-              <div className="border-b border-white/10 px-4 py-3">
+            <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
+              <div className="border-b border-[var(--main-color-10)] px-4 py-3">
                 <h3 className="font-semibold md:text-xl">Итоговая рекомендация</h3>
               </div>
 
-              <div className="flex flex-col divide-y divide-white/10">
+              <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
                 {result.recommendations.map((recommendation) => (
                   <div key={recommendation} className="px-4 py-4">
                     <p className="text-sm leading-relaxed sm:text-base">{recommendation}</p>
@@ -269,7 +292,7 @@ function ScanSection() {
               type="button"
               disabled={!message.trim() || isLoading}
               onClick={resetForm}
-              className="cursor-pointer rounded-2xl border border-[var(--border)] bg-[var(--element-background)] py-4 transition-colors duration-300 hover:bg-[var(--hover)] focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none"
+              className="cursor-pointer rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)] py-4 transition-colors duration-300 hover:bg-[var(--element-hover-color)] focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none"
             >
               <span className="text-sm md:text-base">Проверить другое сообщение</span>
             </button>
@@ -279,25 +302,25 @@ function ScanSection() {
 
       {!result && scanSituationHistoryItems.length > 0 && (
         <div className="section-spacing mx-auto max-w-5xl">
-          <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--element-background)]">
-            <div className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3">
+          <div className="overflow-hidden rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
+            <div className="flex items-center justify-between gap-4 border-b border-[var(--main-color-10)] px-4 py-3">
               <h2 className="font-semibold md:text-xl">История проверок</h2>
 
               <button
                 type="button"
                 disabled={isLoading}
                 onClick={clearScanSituationHistoryItems}
-                className={`text-sm focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none ${
+                className={`text-sm focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none ${
                   isLoading
                     ? 'cursor-not-allowed opacity-40'
-                    : 'cursor-pointer transition-colors duration-300 hover:text-blue-600'
+                    : 'cursor-pointer transition-colors duration-300 hover:text-[var(--text-hover-color)]'
                 }`}
               >
                 Очистить
               </button>
             </div>
 
-            <div className="flex flex-col divide-y divide-white/10">
+            <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
               {scanSituationHistoryItems.map((scanSituationHistoryItem) => {
                 const isOpened = openedHistoryItemId === scanSituationHistoryItem.id;
 
@@ -306,12 +329,12 @@ function ScanSection() {
                     <button
                       type="button"
                       onClick={() => setOpenedHistoryItemId(isOpened ? null : scanSituationHistoryItem.id)}
-                      className="flex w-full cursor-pointer items-center justify-between gap-4 px-4 py-4 text-left transition-colors duration-300 hover:bg-[var(--hover)] focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none"
+                      className="flex w-full cursor-pointer items-center justify-between gap-4 px-4 py-4 text-left transition-colors duration-300 hover:bg-[var(--element-hover-color)] focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none"
                     >
                       <div>
                         <p className="font-semibold">{scanSituationHistoryItem.result.riskLevel}</p>
 
-                        <p className="max-w-[147px] pt-1 text-sm leading-relaxed text-white/60 md:max-w-none">
+                        <p className="max-w-[147px] pt-1 text-sm leading-relaxed text-[var(--main-color-60)] md:max-w-none">
                           {scanSituationHistoryItem.channel} · {scanSituationHistoryItem.sender}
                         </p>
                       </div>
@@ -320,10 +343,10 @@ function ScanSection() {
                     </button>
 
                     {isOpened && (
-                      <div className="flex flex-col gap-4 border-t border-white/10 px-4 py-4">
+                      <div className="flex flex-col gap-4 border-t border-[var(--main-color-10)] px-4 py-4">
                         <div>
                           <p className="text-sm font-semibold">Сообщение</p>
-                          <p className="pt-2 text-sm leading-relaxed text-white/60">
+                          <p className="pt-2 text-sm leading-relaxed text-[var(--main-color-60)]">
                             {scanSituationHistoryItem.message}
                           </p>
                         </div>
@@ -332,7 +355,7 @@ function ScanSection() {
                           <p className="text-sm font-semibold">Обнаруженные признаки</p>
                           <div className="flex flex-col gap-2 pt-2">
                             {scanSituationHistoryItem.result.riskFactors.map((riskFactor) => (
-                              <p key={riskFactor} className="text-sm leading-relaxed text-white/60">
+                              <p key={riskFactor} className="text-sm leading-relaxed text-[var(--main-color-60)]">
                                 {riskFactor}
                               </p>
                             ))}
@@ -343,7 +366,7 @@ function ScanSection() {
                           <p className="text-sm font-semibold">Рекомендации</p>
                           <div className="flex flex-col gap-2 pt-2">
                             {scanSituationHistoryItem.result.recommendations.map((recommendation) => (
-                              <p key={recommendation} className="text-sm leading-relaxed text-white/60">
+                              <p key={recommendation} className="text-sm leading-relaxed text-[var(--main-color-60)]">
                                 {recommendation}
                               </p>
                             ))}
