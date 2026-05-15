@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
-:root {
+:root,
+html.light {
     --page-background-color: rgb(255, 250, 238);
-    --cover-image: url("./assets/misis-cover-light.webp");
+    --cover-image: url("/misis-cover-light.webp");
     --main-color: rgb(0, 4, 17);
     --main-color-10: rgba(0, 4, 17, 0.1);
     --main-color-20: rgba(0, 4, 17, 0.2);
@@ -18,24 +19,28 @@
     --divider-gradient-color: rgba(0, 4, 17, 0.12);
 }
 
-@media (prefers-color-scheme: light) {
-    :root {
-        --page-background-color: rgb(0, 4, 17);
-        --cover-image: url("./assets/misis-cover-dark.webp");
-        --main-color: rgb(255, 255, 255);
-        --main-color-10: rgba(255, 255, 255, 0.1);
-        --main-color-20: rgba(255, 255, 255, 0.2);
-        --main-color-60: rgba(255, 255, 255, 0.6);
-        --element-background-color: rgba(0, 0, 0, 0.5);
-        --element-hover-color: rgba(59, 130, 246, 0.3);
-        --secondary-heading-color: rgb(209, 213, 219);
-        --secondary-text-color: rgb(156, 163, 175);
-        --text-hover-color: rgb(37, 99, 235);
-        --heading-gradient-from: rgb(125, 211, 252);
-        --heading-gradient-via: rgb(96, 165, 250);
-        --heading-gradient-to: rgb(37, 99, 235);
-        --divider-gradient-color: rgba(255, 255, 255, 0.2);
-    }
+html.dark {
+    --page-background-color: rgb(0, 4, 17);
+    --cover-image: url("/misis-cover-dark.webp");
+    --main-color: rgb(255, 255, 255);
+    --main-color-10: rgba(255, 255, 255, 0.1);
+    --main-color-20: rgba(255, 255, 255, 0.2);
+    --main-color-60: rgba(255, 255, 255, 0.6);
+    --element-background-color: rgba(0, 0, 0, 0.5);
+    --element-hover-color: rgba(59, 130, 246, 0.3);
+    --secondary-heading-color: rgb(209, 213, 219);
+    --secondary-text-color: rgb(156, 163, 175);
+    --text-hover-color: rgb(37, 99, 235);
+    --heading-gradient-from: rgb(125, 211, 252);
+    --heading-gradient-via: rgb(96, 165, 250);
+    --heading-gradient-to: rgb(37, 99, 235);
+    --divider-gradient-color: rgba(255, 255, 255, 0.2);
+}
+
+#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 html {
@@ -47,7 +52,48 @@ body {
     color: var(--main-color);
 }
 
-body::before {
+.cover-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    width: min(65%, 1086px);
+    height: 1400px;
+}
+
+.cover-image {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    aspect-ratio: 1086 / 1227;
+    background-image: var(--cover-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* .cover-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    width: 65%;
+    height: 110%;
+}
+
+.cover-image {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    aspect-ratio: 1086 / 1227;
+    background-image: var(--cover-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+} */
+
+
+/* body::before {
     content: "";
     position: fixed;
     top: 0;
@@ -60,7 +106,7 @@ body::before {
     background-position: center;
     background-repeat: no-repeat;
     pointer-events: none;
-}
+} */
 
 .markup-layout {
     padding-inline: 15px;
@@ -75,3 +121,4 @@ body::before {
         padding-top: 60px;
     }
 }
+

@@ -1,24 +1,87 @@
+import { useEffect, useState } from 'react';
+import { getInitialTheme, getActiveTheme, applyTheme, type Theme } from '../../utils/theme';
+import { Sun, Moon, Monitor } from 'lucide-react';
+
 function Header() {
-  const navItems = [
-    // { label: 'Как работает', href: '#how-it-works' },
-    // { label: 'Преимущества', href: '#advantages' },
-    // { label: 'FAQ', href: '#faq' },
-    { label: 'Начать проверку', href: '#scan' },
-  ];
+  const navItems = [{ label: 'Начать проверку', href: '#scan' }];
+
+  const [theme, setTheme] = useState<Theme>(getInitialTheme());
+
+  const [activeTheme, setActiveTheme] = useState(getActiveTheme());
+
+  function toggleTheme() {
+    const nextTheme = activeTheme === 'light' ? 'dark' : 'light';
+
+    setTheme(nextTheme);
+    setActiveTheme(nextTheme);
+    applyTheme(nextTheme);
+  }
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: light)');
+
+    function handleSystemThemeChange() {
+      if (theme === 'system') {
+        applyTheme('system');
+        setActiveTheme(getActiveTheme());
+      }
+    }
+
+    media.addEventListener('change', handleSystemThemeChange);
+
+    return () => {
+      media.removeEventListener('change', handleSystemThemeChange);
+    };
+  }, [theme]);
 
   return (
     <header className="markup-layout pt-[15px]">
-      <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm md:justify-start">
-        {navItems.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            className="transition-colors duration-300 hover:text-[var(--text-hover-color)] focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none"
+      <div className="flex items-center justify-between">
+        <nav className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="transition-colors duration-300 hover:text-[var(--text-hover-color)] focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className={`group cursor-pointer rounded-2xl border p-3 transition-colors duration-300 focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none ${
+              theme !== 'system'
+                ? 'border-[var(--text-hover-color)] bg-[var(--element-hover-color)]'
+                : 'border-[var(--main-color-20)] bg-[var(--element-background-color)] hover:bg-[var(--element-hover-color)]'
+            }`}
           >
-            {item.label}
-          </a>
-        ))}
-      </nav>
+            {activeTheme === 'light' ? (
+              <Moon className="h-4 w-4 transition-transform duration-300 ease-out group-hover:-rotate-12" />
+            ) : (
+              <Sun className="h-4 w-4 transition-transform duration-300 ease-out group-hover:rotate-12" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              applyTheme('system');
+              setTheme('system');
+              setActiveTheme(getActiveTheme());
+            }}
+            className={`rounded-2xl border p-3 transition-colors duration-300 focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none ${
+              theme === 'system'
+                ? 'cursor-not-allowed border-[var(--text-hover-color)] bg-[var(--element-hover-color)]'
+                : 'cursor-pointer border-[var(--main-color-20)] bg-[var(--element-background-color)] hover:bg-[var(--element-hover-color)]'
+            }`}
+          >
+            <Monitor className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
     </header>
   );
 }

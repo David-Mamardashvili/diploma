@@ -4,7 +4,7 @@ import { Shield, Brain, Zap, Lock, Target, TriangleAlert } from 'lucide-react';
 function HeroSection() {
   return (
     <section className="markup-layout section-spacing">
-      <div className="md: flex flex-col items-center justify-center gap-1 md:flex-row">
+      <div className="flex flex-col items-center justify-center gap-1 md:flex-row">
         <Shield className="h-10 w-10 md:h-12 md:w-12" />
         <h1 className="text-3xl font-bold uppercase md:text-6xl">Антимошенник</h1>
       </div>

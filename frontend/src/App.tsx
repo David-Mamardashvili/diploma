@@ -7,6 +7,9 @@ import Footer from './components/Footer/Footer';
 function App() {
   return (
     <>
+      <div className="cover-wrapper">
+        <div className="cover-image" />
+      </div>
       <Header />
       <HeroSection />
       <ScanSection />
