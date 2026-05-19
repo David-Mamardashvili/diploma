@@ -1,3 +1,4 @@
+import 'multer';
 import OpenAI from 'openai';
 import {
   ScanLinksWithGoogleSafeBrowsingResponseSchema,
