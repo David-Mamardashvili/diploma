@@ -1,6 +1,7 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import scanSituationRoutes from './routes/scanSituationRoutes';
+import scanSituationRoutes from './routes/scanSituationRoute';
 
 const app = express();
 

@@ -1,33 +1,40 @@
 import type { Request, Response } from 'express';
-import { openai } from '../services/openaiService';
+import 'multer';
+import { ScanSituationTextRequestSchema } from '../schemas/scanSituationSchema';
+import { scanSituationService } from '../services/scanSituationService';
 
-export async function scanSituationController(req: Request, res: Response) {
+export async function scanSituationController(
+  req: Request,
+  res: Response,
+) {
   try {
-    const { channel, sender, message } = req.body;
-    const response = await openai.responses.create({
-      model: 'gpt-5.4-mini',
-      input: 
-      ` 
-        Ты рекомендательная система распознавания мошеннических ситуаций.
+    const {
+      channel,
+      sender,
+      senderScenario,
+      message,
+    } = ScanSituationTextRequestSchema.parse(
+      JSON.parse(req.body.text),
+    );
 
-        Проанализируй пользовательские данные и верни только JSON-объект без дополнительного текста, строго соответствующий следующей структуре:
-            {
-                "riskLevel": "Низкий риск" | "Средний риск" | "Высокий риск", // уровень риска мошенничества
-                "riskPercentage": number (1-100), // уровень риска мошенничества
-                "riskFactors": string[] (1-5 элементов), // признаки, указывающие на риск
-                "recommendations": string[] (1-5 элементов) // рекомендуемые действия
-            }
+    const files = Array.isArray(req.files)
+      ? (req.files as Express.Multer.File[])
+      : [];
 
-        Пользовательские данные:
-            Канал коммуникации: ${channel}
-            Отправитель сообщения: ${sender}
-            Текст сообщения: ${message}
-      `,
+    const result = await scanSituationService({
+      channel,
+      sender,
+      senderScenario,
+      message,
+      files,
     });
-    const result = JSON.parse(response.output_text);
-    res.json(result);
-  } 
-  catch {
-    res.status(500).json({ error: 'Ошибка анализа' });
+
+    return res.json(result);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: 'Не удалось выполнить анализ. Попробуйте позже.',
+    });
   }
 }
