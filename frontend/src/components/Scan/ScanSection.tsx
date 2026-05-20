@@ -24,11 +24,13 @@ type ScanSituationText = {
 type ScanSituationResult = {
   riskLevel: string;
   riskPercentage: number;
-  fraudScheme: string;
-  riskSigns: string[];
+  warningSigns: string[];
+  fraudScheme: {
+    title: string;
+    description: string;
+  };
   recommendations: string[];
   flaggedLinks: string[];
-  unflaggedLinks: string[];
 };
 
 type ScanSituationHistoryItem = {
@@ -157,7 +159,7 @@ function ScanSection() {
   };
 
   return (
-    <section id="scan" className="markup-layout section-spacing">
+    <section id="scan" className="markup-layout section-spacing scroll-mt-[-35px]">
       <h2 className="text-center text-3xl font-bold md:text-6xl">
         Проверьте сообщение
         <br />
@@ -339,91 +341,86 @@ function ScanSection() {
       {result && !isLoading && (
         <div className="mx-auto max-w-xl pt-5">
           <div className="flex flex-col gap-3">
-            <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)] p-4">
-              <div className="flex flex-col gap-6">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="font-bold md:text-xl">{result.riskLevel}</span>
-                  <span className="text-2xl font-bold md:text-5xl">{result.riskPercentage}%</span>
+            {result.riskLevel && typeof result.riskPercentage === 'number' && (
+              <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)] p-4">
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="font-bold md:text-xl">{result.riskLevel}</span>
+
+                    <span className="text-2xl font-bold md:text-5xl">{result.riskPercentage}%</span>
+                  </div>
+
+                  <div className="w-full rounded-full border border-[var(--main-color-20)]">
+                    <div
+                      className={`h-4 rounded-full ${
+                        result.riskLevel === 'Критический риск'
+                          ? 'bg-purple-600'
+                          : result.riskLevel === 'Высокий риск'
+                            ? 'bg-red-500'
+                            : result.riskLevel === 'Средний риск'
+                              ? 'bg-yellow-500'
+                              : 'bg-green-500'
+                      }`}
+                      style={{ width: `${result.riskPercentage}%` }}
+                    />
+                  </div>
                 </div>
-
-                <div className="w-full rounded-full border border-[var(--main-color-20)]">
-                  <div
-                    className={`h-4 rounded-full ${
-                      result.riskLevel === 'Высокий риск'
-                        ? 'bg-red-500'
-                        : result.riskLevel === 'Средний риск'
-                          ? 'bg-yellow-500'
-                          : 'bg-green-500'
-                    }`}
-                    style={{ width: `${result.riskPercentage}%` }}
-                  />
-                </div>
               </div>
-            </div>
+            )}
 
-            <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
-              <div className="border-b border-[var(--main-color-10)] px-4 py-3">
-                <h3 className="font-semibold md:text-xl">Предполагаемая схема</h3>
-              </div>
-
-              <div className="px-4 py-4">
-                <p className="text-sm leading-relaxed sm:text-base">{result.fraudScheme}</p>
-              </div>
-            </div>
-
-            {(result.flaggedLinks.length > 0 || result.unflaggedLinks.length > 0) && (
+            {result.warningSigns.length > 0 && (
               <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
                 <div className="border-b border-[var(--main-color-10)] px-4 py-3">
-                  <h3 className="font-semibold md:text-xl">Найденные ссылки</h3>
+                  <h3 className="font-semibold md:text-xl">Обнаруженные тревожные признаки</h3>
                 </div>
 
                 <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
-                  {result.flaggedLinks.map((link) => (
-                    <div key={link} className="px-4 py-4">
-                      <p className="text-sm leading-relaxed break-all text-red-500 sm:text-base">{link}</p>
-
-                      <p className="pt-2 text-xs text-red-500 sm:text-sm">Выявлена угроза</p>
-                    </div>
-                  ))}
-
-                  {result.unflaggedLinks.map((link) => (
-                    <div key={link} className="px-4 py-4">
-                      <p className="text-xs sm:text-sm">Проверка не выявила угроз</p>
-
-                      <p className="pt-2 text-sm leading-relaxed break-all sm:text-base">{link}</p>
+                  {result.warningSigns.map((riskFactor) => (
+                    <div key={riskFactor} className="px-4 py-4">
+                      <p className="text-sm leading-relaxed sm:text-base">{riskFactor}</p>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
-              <div className="border-b border-[var(--main-color-10)] px-4 py-3">
-                <h3 className="font-semibold md:text-xl">Обнаруженные признаки</h3>
-              </div>
+            {result.fraudScheme && (
+              <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
+                <div className="border-b border-[var(--main-color-10)] px-4 py-3">
+                  <h3 className="font-semibold md:text-xl">Возможная схема мошенничества</h3>
+                </div>
 
-              <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
-                {result.riskSigns.map((riskFactor) => (
-                  <div key={riskFactor} className="px-4 py-4">
-                    <p className="text-sm leading-relaxed sm:text-base">{riskFactor}</p>
+                <div className="px-4 py-4">
+                  <div className="flex flex-col gap-3">
+                    {result.fraudScheme.title && (
+                      <h4 className="font-semibold sm:text-lg">{result.fraudScheme.title}</h4>
+                    )}
+
+                    {result.fraudScheme.description && (
+                      <p className="text-sm leading-relaxed sm:text-base">{result.fraudScheme.description}</p>
+                    )}
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
-              <div className="border-b border-[var(--main-color-10)] px-4 py-3">
-                <h3 className="font-semibold md:text-xl">Итоговая рекомендация</h3>
-              </div>
+            {result.recommendations.length > 0 && (
+              <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
+                <div className="border-b border-[var(--main-color-10)] px-4 py-3">
+                  <h3 className="font-semibold md:text-xl">Рекомендации</h3>
+                </div>
 
-              <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
-                {result.recommendations.map((recommendation) => (
-                  <div key={recommendation} className="px-4 py-4">
-                    <p className="text-sm leading-relaxed sm:text-base">{recommendation}</p>
-                  </div>
-                ))}
+                <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
+                  {result.recommendations.map((recommendation, index) => (
+                    <div key={recommendation} className="px-4 py-4">
+                      <p className="text-sm leading-relaxed sm:text-base">
+                        {index + 1}. {recommendation}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <button
               type="button"
@@ -485,72 +482,68 @@ function ScanSection() {
                         <div className="border-t border-[var(--main-color-10)]" />
 
                         <div className="flex flex-col gap-4 py-4">
-                          <div>
-                            <p className="text-sm font-semibold">Сообщение</p>
-
-                            <p className="pt-2 text-sm leading-relaxed text-[var(--main-color-60)]">
-                              {scanSituationHistoryItem.message}
-                            </p>
-                          </div>
-
-                          <div>
-                            <p className="text-sm font-semibold">Предполагаемая схема</p>
-
-                            <p className="pt-2 text-sm leading-relaxed text-[var(--main-color-60)]">
-                              {scanSituationHistoryItem.result.fraudScheme}
-                            </p>
-                          </div>
-
-                          {(scanSituationHistoryItem.result.flaggedLinks.length > 0 ||
-                            scanSituationHistoryItem.result.unflaggedLinks.length > 0) && (
+                          {scanSituationHistoryItem.message && (
                             <div>
-                              <p className="text-sm font-semibold">Ссылки в сообщении</p>
+                              <p className="text-sm font-semibold">Сообщение</p>
 
-                              <div className="flex flex-col gap-3 pt-2">
-                                {scanSituationHistoryItem.result.flaggedLinks.map((link) => (
-                                  <div key={link}>
-                                    <p className="text-xs font-semibold text-red-500">Выявлена угроза</p>
+                              <div className="pt-2">
+                                <p className="text-sm leading-relaxed text-[var(--main-color-60)]">
+                                  {scanSituationHistoryItem.message}
+                                </p>
+                              </div>
+                            </div>
+                          )}
 
-                                    <p className="pt-1 text-sm leading-relaxed break-all text-red-500">{link}</p>
-                                  </div>
-                                ))}
+                          {scanSituationHistoryItem.result.warningSigns.length > 0 && (
+                            <div>
+                              <p className="text-sm font-semibold">Обнаруженные тревожные признаки</p>
 
-                                {scanSituationHistoryItem.result.unflaggedLinks.map((link) => (
-                                  <div key={link}>
-                                    <p className="text-xs font-semibold">Проверка не выявила угроз</p>
-
-                                    <p className="pt-1 text-sm leading-relaxed break-all text-[var(--main-color-60)]">
-                                      {link}
-                                    </p>
-                                  </div>
+                              <div className="flex flex-col gap-2 pt-2">
+                                {scanSituationHistoryItem.result.warningSigns.map((riskFactor) => (
+                                  <p key={riskFactor} className="text-sm leading-relaxed text-[var(--main-color-60)]">
+                                    {riskFactor}
+                                  </p>
                                 ))}
                               </div>
                             </div>
                           )}
 
-                          <div>
-                            <p className="text-sm font-semibold">Обнаруженные признаки</p>
+                          {scanSituationHistoryItem.result.fraudScheme && (
+                            <div>
+                              <p className="text-sm font-semibold">Возможная схема мошенничества</p>
 
-                            <div className="flex flex-col gap-2 pt-2">
-                              {scanSituationHistoryItem.result.riskSigns.map((riskFactor) => (
-                                <p key={riskFactor} className="text-sm leading-relaxed text-[var(--main-color-60)]">
-                                  {riskFactor}
-                                </p>
-                              ))}
+                              <div className="flex flex-col gap-2 pt-2">
+                                {scanSituationHistoryItem.result.fraudScheme.title && (
+                                  <p className="text-sm leading-relaxed text-[var(--main-color-60)]">
+                                    {scanSituationHistoryItem.result.fraudScheme.title}
+                                  </p>
+                                )}
+
+                                {scanSituationHistoryItem.result.fraudScheme.description && (
+                                  <p className="text-sm leading-relaxed text-[var(--main-color-60)]">
+                                    {scanSituationHistoryItem.result.fraudScheme.description}
+                                  </p>
+                                )}
+                              </div>
                             </div>
-                          </div>
+                          )}
 
-                          <div>
-                            <p className="text-sm font-semibold">Рекомендации</p>
+                          {scanSituationHistoryItem.result.recommendations.length > 0 && (
+                            <div>
+                              <p className="text-sm font-semibold">Рекомендации</p>
 
-                            <div className="flex flex-col gap-2 pt-2">
-                              {scanSituationHistoryItem.result.recommendations.map((recommendation) => (
-                                <p key={recommendation} className="text-sm leading-relaxed text-[var(--main-color-60)]">
-                                  {recommendation}
-                                </p>
-                              ))}
+                              <div className="flex flex-col gap-2 pt-2">
+                                {scanSituationHistoryItem.result.recommendations.map((recommendation, index) => (
+                                  <p
+                                    key={recommendation}
+                                    className="text-sm leading-relaxed text-[var(--main-color-60)]"
+                                  >
+                                    {index + 1}. {recommendation}
+                                  </p>
+                                ))}
+                              </div>
                             </div>
-                          </div>
+                          )}
                         </div>
                       </div>
                     )}

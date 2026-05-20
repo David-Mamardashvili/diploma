@@ -5,17 +5,14 @@ export const ScanSituationTextRequestSchema = z.object({
     question: z.string(),
     answer: z.string(),
   }),
-
   sender: z.object({
     question: z.string(),
     answer: z.string(),
   }),
-
   senderScenario: z.object({
     question: z.string(),
     answer: z.string(),
   }),
-
   message: z.string(),
 });
 
@@ -24,17 +21,16 @@ export const ScanSituationWithOpenAIResponseSchema = z.object({
     'Низкий риск',
     'Средний риск',
     'Высокий риск',
+    'Критический риск',
   ]),
-
   riskPercentage: z.number().min(0).max(100),
-
-  fraudScheme: z.string(),
-
-  riskSigns: z.array(z.string()),
-
+  warningSigns: z.array(z.string()),
+  fraudScheme: z.object({
+    title: z.string(),
+    description: z.string(),
+  }),
   recommendations: z.array(z.string()),
-
-  detectedLinks: z.array(z.string()),
+  fileLinks: z.array(z.string()),
 });
 
 export const ScanLinksWithGoogleSafeBrowsingResponseSchema = z.object({

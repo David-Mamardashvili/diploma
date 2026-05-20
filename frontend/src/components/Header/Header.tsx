@@ -3,8 +3,6 @@ import { getInitialTheme, getActiveTheme, applyTheme, type Theme } from '../../u
 import { Sun, Moon, Monitor } from 'lucide-react';
 
 function Header() {
-  const navItems = [{ label: 'Начать проверку', href: '#scan' }];
-
   const [theme, setTheme] = useState<Theme>(getInitialTheme());
 
   const [activeTheme, setActiveTheme] = useState(getActiveTheme());
@@ -36,17 +34,14 @@ function Header() {
 
   return (
     <header className="markup-layout pt-[15px]">
-      <div className="flex items-center justify-between">
-        <nav className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="transition-colors duration-300 hover:text-[var(--text-hover-color)] focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none"
-            >
-              {item.label}
-            </a>
-          ))}
+      <div className="flex items-start justify-between">
+        <nav className="text-sm">
+          <a
+            href="#scan"
+            className="transition-colors duration-300 hover:text-[var(--text-hover-color)] focus-visible:ring-1 focus-visible:ring-[var(--main-color)] focus-visible:outline-none"
+          >
+            Начать проверку
+          </a>
         </nav>
         <div className="flex items-center gap-2">
           <button

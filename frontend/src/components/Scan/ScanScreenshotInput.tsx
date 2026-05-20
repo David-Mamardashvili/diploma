@@ -1,5 +1,7 @@
 import { Upload } from 'lucide-react';
 
+const MAX_SCREENSHOT_SIZE = 50 * 1024 * 1024;
+
 type ScanScreenshotInputProps = {
   screenshots: File[];
   setScreenshots: React.Dispatch<React.SetStateAction<File[]>>;
@@ -25,8 +27,24 @@ function ScanScreenshotInput({ screenshots, setScreenshots, isLoading }: ScanScr
           onChange={(event) => {
             const newFiles = Array.from(event.target.files || []);
 
+            const hasLargeFile = newFiles.some((file) => file.size > MAX_SCREENSHOT_SIZE);
+
+            if (hasLargeFile) {
+              alert('Размер изображения не должен превышать 50 MB');
+              event.target.value = '';
+
+              return;
+            }
+
             setScreenshots((currentScreenshots) => {
-              return [...currentScreenshots, ...newFiles].slice(-3);
+              const uniqueNewFiles = newFiles.filter(
+                (newFile) =>
+                  !currentScreenshots.some(
+                    (existingFile) => existingFile.name === newFile.name && existingFile.size === newFile.size,
+                  ),
+              );
+
+              return [...currentScreenshots, ...uniqueNewFiles].slice(-3);
             });
 
             event.target.value = '';
