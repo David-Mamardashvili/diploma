@@ -1,15 +1,19 @@
 import { z } from 'zod';
 
 export const ScanSituationTextRequestSchema = z.object({
-  channel: z.object({
+  question1: z.object({
     question: z.string(),
     answer: z.string(),
   }),
-  sender: z.object({
+  question2: z.object({
     question: z.string(),
     answer: z.string(),
   }),
-  senderScenario: z.object({
+  question3: z.object({
+    question: z.string(),
+    answer: z.string(),
+  }),
+  question4: z.object({
     question: z.string(),
     answer: z.string(),
   }),
@@ -25,6 +29,7 @@ export const ScanSituationWithOpenAIResponseSchema = z.object({
   ]),
   riskPercentage: z.number().min(0).max(100),
   warningSigns: z.array(z.string()),
+  psychologicalManipulations: z.array(z.string()),
   fraudScheme: z.object({
     title: z.string(),
     description: z.string(),

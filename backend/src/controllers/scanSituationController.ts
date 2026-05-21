@@ -9,22 +9,22 @@ export async function scanSituationController(
 ) {
   try {
     const {
-      channel,
-      sender,
-      senderScenario,
+      question1,
+      question2,
+      question3,
+      question4,
       message,
-    } = ScanSituationTextRequestSchema.parse(
-      JSON.parse(req.body.text),
-    );
+    } = ScanSituationTextRequestSchema.parse(JSON.parse(req.body.text));
 
     const files = Array.isArray(req.files)
       ? (req.files as Express.Multer.File[])
       : [];
 
     const result = await scanSituationService({
-      channel,
-      sender,
-      senderScenario,
+      question1,
+      question2,
+      question3,
+      question4,
       message,
       files,
     });

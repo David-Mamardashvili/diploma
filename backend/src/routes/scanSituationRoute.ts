@@ -4,7 +4,7 @@ import { scanSituationController } from '../controllers/scanSituationController'
 
 const router = Router();
 
-router.post(
+router.post( 
     '/scan-situation',
     multer({
       storage: multer.memoryStorage(),

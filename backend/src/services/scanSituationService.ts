@@ -16,9 +16,10 @@ const openai = new OpenAI({
 });
 
 type ScanSituationServiceParams = {
-  channel: { question: string; answer: string };
-  sender: { question: string; answer: string };
-  senderScenario: { question: string; answer: string };
+  question1: { question: string; answer: string };
+  question2: { question: string; answer: string };
+  question3: { question: string; answer: string };
+  question4: { question: string; answer: string };
   message: string;
   files: Express.Multer.File[];
 };
@@ -86,86 +87,11 @@ async function scanLinksWithGoogleSafeBrowsing(links: string[]) {
   );
 }
 
-// async function generateRecommendationsWithLinks({
-//   riskLevel,
-//   riskPercentage,
-//   warningSigns,
-//   fraudScheme,
-//   flaggedLinks,
-//   unflaggedLinks,
-// }: {
-//   riskLevel: string;
-//   riskPercentage: number;
-//   warningSigns: string[];
-//   fraudScheme: { title: string; description: string };
-//   flaggedLinks: string[];
-//   unflaggedLinks: string[];
-// }) {
-//   const response = await openai.responses.create({
-//     model: 'gpt-5.4-mini',
-//     reasoning: { effort: 'low' },
-//     input: [
-//       {
-//         role: 'developer',
-//         content: `
-//           Ты система генерации финальных рекомендаций по защите от мошенничества. 
-//           Возвращай рекомендации с учетом общего анализа ситуации и результата проверки ссылок.
-//           Если ссылка из flaggedLinks обязательно сообщи об угрозе.
-//           Если ссылка из unflaggedLinks обязательно сообщи о том что она была проверена и угроз не найдено и исходя из этого давай рекомендации.
-//         `,
-//       },
-//       {
-//         role: 'user',
-//         content: `
-//           Уровень риска: ${riskLevel}
-
-//           Процент риска: ${riskPercentage}
-
-//           Обнаруженные тревожные признаки: ${warningSigns.join('\n') || 'Не обнаружены'}
-
-//           Возможная схема мошенничества:
-//           ${fraudScheme.title}
-//           ${fraudScheme.description}
-
-//           Ссылки, в которых не выявлена угроза: ${unflaggedLinks.join('\n') || 'Не обнаружены'}
-
-//           Ссылки, в которых выявлена угроза: ${flaggedLinks.join('\n') || 'Не обнаружены'}
-//         `,
-//       },
-//     ],
-//     text: {
-//       format: {
-//         type: 'json_schema',
-//         name: 'scan-situation-result-with-links',
-//         strict: true,
-//         schema: {
-//           type: 'object',
-//           properties: {
-//             recommendations: {
-//               type: 'array',
-//               items: { type: 'string' },
-//               minItems: 2,
-//               maxItems: 4,
-//             },
-//           },
-//           required: ['recommendations'],
-//           additionalProperties: false,
-//         },
-//       },
-//     },
-//   });
-
-//   const result = JSON.parse(response.output_text) as {
-//     recommendations: string[];
-//   };
-
-//   return result.recommendations;
-// }
-
 export async function scanSituationService({
-  channel,
-  sender,
-  senderScenario,
+  question1,
+  question2,
+  question3,
+  question4,
   message,
   files,
 }: ScanSituationServiceParams) {
@@ -173,14 +99,17 @@ export async function scanSituationService({
     type: 'input_text',
     text: `
       Пользовательские данные:
-        Вопрос: ${channel.question}
-        Ответ: ${channel.answer}
+        Вопрос: ${question1.question}
+        Ответ: ${question1.answer}
 
-        Вопрос: ${sender.question}
-        Ответ: ${sender.answer}
+        Вопрос: ${question2.question}
+        Ответ: ${question2.answer}
 
-        Вопрос: ${senderScenario.question}
-        Ответ: ${senderScenario.answer}
+        Вопрос: ${question3.question}
+        Ответ: ${question3.answer}
+
+        Вопрос: ${question4.question}
+        Ответ: ${question4.answer}
 
         Текст сообщения:
         ${message || 'Не указано'}
@@ -216,8 +145,17 @@ export async function scanSituationService({
           4. Возвращай оценку риска в диапазоне от 76 до 100 исключительно при явной попытке мошенничества.
       
         Правила для поля warningSigns:
-          1. Возвращай исключительно тревожные признаки.
-          2. Если тревожных признаков нет — возвращай пустой массив.
+          1. Возвращай исключительно объективные тревожные признаки мошенничества.
+          2. Тревожным признаком считай исключительно технические, контекстные, визуальные или поведенческие признаки риска.
+          3. Не добавляй психологические манипуляции, эмоциональное давление или методы убеждения пользователя.
+          4. Любые признаки, связанные со срочностью, страхом, давлением, доверием, любопытством, паникой или эмоциями, относятся исключительно к полю psychologicalManipulations.
+          5. Если тревожных признаков нет — возвращай пустой массив.
+
+        Правила для поля psychologicalManipulations:
+          1. Возвращай исключительно психологические манипуляции: давление, запугивание, создание срочности, попытки вызвать страх, панику, доверие, жалость, чувство вины, жадность или эмоциональную привязанность.
+          2. Также относись к psychologicalManipulations попытки изолировать пользователя, запрет советоваться с другими людьми, давление авторитетом или обещания лёгкой выгоды.
+          3. Не добавляй сюда технические или контекстные признаки мошенничества — они относятся только к warningSigns.
+          4. Если психологические манипуляции отсутствуют — возвращай пустой массив.
 
         Правила для поля fraudScheme:
           1. В поле title возвращай исключительно краткое название возможной схемы мошенничества.
@@ -271,9 +209,23 @@ export async function scanSituationService({
               items: { type: 'string' },
               maxItems: 4,
               description: `
-                1. Возвращай исключительно тревожные признаки.
-                2. Если тревожных признаков нет — возвращай пустой массив.
+                1. Возвращай исключительно тревожные признаки мошенничества.
+                2. Тревожным признаком считай исключительно технические, контекстные, визуальные или поведенческие признаки риска.
+                3. Не возвращай психологические манипуляции, эмоциональное давление или методы убеждения пользователя.
+                4. Любые признаки, связанные со срочностью, страхом, давлением, доверием, любопытством, паникой или эмоциями, относятся исключительно к полю psychologicalManipulations.
+                5. Если тревожных признаков нет — возвращай пустой массив.
               `,
+            },
+            psychologicalManipulations: {
+              type: 'array',
+              items: { type: 'string' },
+              maxItems: 3,
+              description: `
+                1. Возвращай исключительно психологические манипуляции: давление, запугивание, создание срочности, попытки вызвать страх, панику, доверие, жалость, чувство вины, жадность или эмоциональную привязанность.
+                2. Также относись к psychologicalManipulations попытки изолировать пользователя, запрет советоваться с другими людьми, давление авторитетом или обещания лёгкой выгоды.
+                3. Не добавляй сюда технические или контекстные признаки мошенничества — они относятся только к warningSigns.
+                4. Если психологические манипуляции отсутствуют — возвращай пустой массив.
+            `,
             },
             fraudScheme: {
               type: 'object',
@@ -302,7 +254,6 @@ export async function scanSituationService({
               description: `
                 Возвращай рекомендации с учётом общего анализа ситуации.
               `,
-
             },
             fileLinks: {
               type: 'array',
@@ -318,6 +269,7 @@ export async function scanSituationService({
             'riskLevel',
             'riskPercentage',
             'warningSigns',
+            'psychologicalManipulations',
             'fraudScheme',
             'recommendations',
             'fileLinks',
@@ -333,9 +285,10 @@ export async function scanSituationService({
   );
   
   const linksFromText = [
-    ...extractLinksFromText(channel.answer),
-    ...extractLinksFromText(sender.answer),
-    ...extractLinksFromText(senderScenario.answer),
+    ...extractLinksFromText(question1.answer),
+    ...extractLinksFromText(question2.answer),
+    ...extractLinksFromText(question3.answer),
+    ...extractLinksFromText(question4.answer),
     ...extractLinksFromText(message),
   ];
   
@@ -351,32 +304,6 @@ export async function scanSituationService({
       ? await scanLinksWithGoogleSafeBrowsing(uniqueLinks)
       : ScanLinksWithGoogleSafeBrowsingResponseSchema.parse({});
   
-  // const flaggedLinks =
-  //   scanLinksResult.matches?.map((match) => match.threat.url) ?? [];
-  
-  // const unflaggedLinks = uniqueLinks.filter(
-  //   (link) => !flaggedLinks.includes(link),
-  // );
-
-  // const recommendations =
-  //   uniqueLinks.length > 0
-  //     ? await generateRecommendationsWithLinks({
-  //         riskLevel: result.riskLevel,
-  //         riskPercentage: result.riskPercentage,
-  //         warningSigns: result.warningSigns,
-  //         fraudScheme: result.fraudScheme,
-  //         flaggedLinks,
-  //         unflaggedLinks,
-  //       })
-  //     : result.recommendations;
-  
-  // const { fileLinks, ...resultWithoutFilesLinks } = result;
-  
-  // return {
-  //   ...resultWithoutFilesLinks,
-  //   recommendations,
-  //   flaggedLinks,
-  // };
   const flaggedLinks =
   scanLinksResult.matches?.map((match) => match.threat.url) ?? [];
 
@@ -385,5 +312,5 @@ export async function scanSituationService({
   return {
     ...resultWithoutFilesLinks,
     flaggedLinks,
-};
+  };
 }

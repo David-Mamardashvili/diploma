@@ -1,23 +1,28 @@
 import { useState } from 'react';
-import { channels, senders, senderScenarios, defaultSenderScenario } from './scanQuestions';
+import {
+  question1Config,
+  question2Config,
+  question2DefaultConfig,
+  question3Config,
+  question3DefaultConfig,
+  question4Config,
+  question4DefaultConfig,
+} from './scanQuestions';
 import ScanOptionButton from './ScanOptionButton';
 import ScanBackButton from './ScanBackButton';
 import ScanCustomOptionInput from './ScanCustomOptionInput';
 import ScanScreenshotInput from './ScanScreenshotInput';
 
+type QuizAnswer = {
+  question: string;
+  answer: string;
+};
+
 type ScanSituationText = {
-  channel: {
-    question: string;
-    answer: string;
-  };
-  sender: {
-    question: string;
-    answer: string;
-  };
-  senderScenario: {
-    question: string;
-    answer: string;
-  };
+  question1: QuizAnswer;
+  question2: QuizAnswer;
+  question3: QuizAnswer;
+  question4: QuizAnswer;
   message: string;
 };
 
@@ -25,6 +30,7 @@ type ScanSituationResult = {
   riskLevel: string;
   riskPercentage: number;
   warningSigns: string[];
+  psychologicalManipulations: string[];
   fraudScheme: {
     title: string;
     description: string;
@@ -35,9 +41,10 @@ type ScanSituationResult = {
 
 type ScanSituationHistoryItem = {
   id: string;
-  channel: string;
-  sender: string;
-  senderScenario: string;
+  question1: string;
+  question2: string;
+  question3: string;
+  question4: string;
   message: string;
   result: ScanSituationResult;
   createdAt: string;
@@ -73,19 +80,24 @@ function ScanSection() {
 
       const result = await scanSituation(
         {
-          channel: {
-            question: channels.question,
-            answer: channel,
+          question1: {
+            question: question1Config.question,
+            answer: question1,
           },
 
-          sender: {
-            question: senders.question,
-            answer: sender,
+          question2: {
+            question: (question2Config[question1] ?? question2DefaultConfig).question,
+            answer: question2,
           },
 
-          senderScenario: {
-            question: (senderScenarios[sender] || defaultSenderScenario).question,
-            answer: senderScenario,
+          question3: {
+            question: (question3Config[question2] ?? question3DefaultConfig).question,
+            answer: question3,
+          },
+
+          question4: {
+            question: (question4Config[question2]?.[question3] ?? question4DefaultConfig).question,
+            answer: question4,
           },
 
           message,
@@ -97,9 +109,10 @@ function ScanSection() {
 
       const scanSituationHistoryItem: ScanSituationHistoryItem = {
         id: crypto.randomUUID(),
-        channel,
-        sender,
-        senderScenario,
+        question1,
+        question2,
+        question3,
+        question4,
         message,
         result,
         createdAt: new Date().toISOString(),
@@ -130,12 +143,14 @@ function ScanSection() {
   const [scanSituationHistoryItems, setScanSituationHistoryItems] = useState<ScanSituationHistoryItem[]>(() => {
     return JSON.parse(localStorage.getItem('scan-situation-history-items') || '[]');
   });
-  const [channel, setChannel] = useState('');
-  const [customChannel, setCustomChannel] = useState('');
-  const [sender, setSender] = useState('');
-  const [customSender, setCustomSender] = useState('');
-  const [senderScenario, setSenderScenario] = useState('');
-  const [customSenderScenario, setCustomSenderScenario] = useState('');
+  const [question1, setQuestion1] = useState('');
+  const [customQuestion1, setCustomQuestion1] = useState('');
+  const [question2, setQuestion2] = useState('');
+  const [customQuestion2, setCustomQuestion2] = useState('');
+  const [question3, setQuestion3] = useState('');
+  const [customQuestion3, setCustomQuestion3] = useState('');
+  const [question4, setQuestion4] = useState('');
+  const [customQuestion4, setCustomQuestion4] = useState('');
   const [message, setMessage] = useState('');
   const [screenshots, setScreenshots] = useState<File[]>([]);
   const [result, setResult] = useState<ScanSituationResult | null>(null);
@@ -144,14 +159,17 @@ function ScanSection() {
   const [openedHistoryItemId, setOpenedHistoryItemId] = useState<string | null>(null);
 
   const resetForm = () => {
-    setChannel('');
-    setCustomChannel('');
+    setQuestion1('');
+    setCustomQuestion1('');
 
-    setSender('');
-    setCustomSender('');
+    setQuestion2('');
+    setCustomQuestion2('');
 
-    setSenderScenario('');
-    setCustomSenderScenario('');
+    setQuestion3('');
+    setCustomQuestion3('');
+
+    setQuestion4('');
+    setCustomQuestion4('');
 
     setMessage('');
     setScreenshots([]);
@@ -159,7 +177,7 @@ function ScanSection() {
   };
 
   return (
-    <section id="scan" className="markup-layout section-spacing scroll-mt-[-35px]">
+    <section id="scan" className="markup-layout section-spacing scroll-mt-[-20px] md:scroll-mt-[-35px]">
       <h2 className="text-center text-3xl font-bold md:text-6xl">
         Проверьте сообщение
         <br />
@@ -175,7 +193,7 @@ function ScanSection() {
         <br />с помощью AI
       </h2>
 
-      {!channel && (
+      {!question1 && (
         <div className="mx-auto max-w-xl pt-5">
           <div className="flex flex-col gap-[14px]">
             <div
@@ -203,91 +221,131 @@ function ScanSection() {
           <p className="pt-5 font-semibold md:text-xl">Откуда вы получили это сообщение?</p>
 
           <div className="flex flex-col gap-3 pt-2">
-            {channels.options.map((channel) => (
-              <ScanOptionButton key={channel} onClick={() => setChannel(channel)}>
-                {channel}
+            {question1Config.options.map((option) => (
+              <ScanOptionButton key={option} onClick={() => setQuestion1(option)}>
+                {option}
               </ScanOptionButton>
             ))}
             <ScanCustomOptionInput
-              value={customChannel}
-              onChange={setCustomChannel}
+              value={customQuestion1}
+              onChange={setCustomQuestion1}
               onSubmit={() => {
-                setChannel(customChannel.trim());
-                setCustomChannel('');
+                setQuestion1(customQuestion1.trim());
+                setCustomQuestion1('');
               }}
             />
           </div>
         </div>
       )}
 
-      {channel && !sender && (
+      {question1 && !question2 && (
         <div className="mx-auto max-w-xl pt-5">
           <ScanBackButton
             onClick={() => {
-              setChannel('');
-              setCustomChannel('');
+              setQuestion1('');
+              setCustomQuestion1('');
             }}
           />
 
-          <p className="pt-2 font-semibold md:text-xl">От кого вы получили это сообщение?</p>
+          <p className="pt-2 font-semibold md:text-xl">
+            {(question2Config[question1] ?? question2DefaultConfig).question}
+          </p>
 
           <div className="flex flex-col gap-3 pt-2">
-            {senders.options.map((sender) => (
-              <ScanOptionButton key={sender} onClick={() => setSender(sender)}>
-                {sender}
+            {(question2Config[question1] ?? question2DefaultConfig).options.map((option) => (
+              <ScanOptionButton key={option} onClick={() => setQuestion2(option)}>
+                {option}
               </ScanOptionButton>
             ))}
             <ScanCustomOptionInput
-              value={customSender}
-              onChange={setCustomSender}
+              value={customQuestion2}
+              onChange={setCustomQuestion2}
               onSubmit={() => {
-                setSender(customSender.trim());
-                setCustomSender('');
+                setQuestion2(customQuestion2.trim());
+                setCustomQuestion2('');
               }}
             />
           </div>
         </div>
       )}
 
-      {channel && sender && !senderScenario && (
+      {question1 && question2 && !question3 && (
         <div className="mx-auto max-w-xl pt-5">
           <ScanBackButton
             onClick={() => {
-              setSender('');
-              setCustomSender('');
-              setSenderScenario('');
-              setCustomSenderScenario('');
+              setQuestion2('');
+              setCustomQuestion2('');
+              setQuestion3('');
+              setCustomQuestion3('');
+              setQuestion4('');
+              setCustomQuestion4('');
             }}
           />
 
-          <p className="pt-2 font-semibold md:text-xl">{(senderScenarios[sender] || defaultSenderScenario).question}</p>
+          <p className="pt-2 font-semibold md:text-xl">
+            {(question3Config[question2] ?? question3DefaultConfig).question}
+          </p>
 
           <div className="flex flex-col gap-3 pt-2">
-            {(senderScenarios[sender] || defaultSenderScenario).options.map((option) => (
-              <ScanOptionButton key={option} onClick={() => setSenderScenario(option)}>
+            {(question3Config[question2] ?? question3DefaultConfig).options.map((option) => (
+              <ScanOptionButton key={option} onClick={() => setQuestion3(option)}>
                 {option}
               </ScanOptionButton>
             ))}
 
             <ScanCustomOptionInput
-              value={customSenderScenario}
-              onChange={setCustomSenderScenario}
+              value={customQuestion3}
+              onChange={setCustomQuestion3}
               onSubmit={() => {
-                setSenderScenario(customSenderScenario.trim());
-                setCustomSenderScenario('');
+                setQuestion3(customQuestion3.trim());
+                setCustomQuestion3('');
               }}
             />
           </div>
         </div>
       )}
 
-      {channel && sender && senderScenario && !result && (
+      {question1 && question2 && question3 && !question4 && (
+        <div className="mx-auto max-w-xl pt-5">
+          <ScanBackButton
+            onClick={() => {
+              setQuestion3('');
+              setCustomQuestion3('');
+              setQuestion4('');
+              setCustomQuestion4('');
+            }}
+          />
+
+          <p className="pt-2 font-semibold md:text-xl">
+            {(question4Config[question2]?.[question3] ?? question4DefaultConfig).question}
+          </p>
+
+          <div className="flex flex-col gap-3 pt-2">
+            {(question4Config[question2]?.[question3] ?? question4DefaultConfig).options.map((option) => (
+              <ScanOptionButton key={option} onClick={() => setQuestion4(option)}>
+                {option}
+              </ScanOptionButton>
+            ))}
+
+            <ScanCustomOptionInput
+              value={customQuestion4}
+              onChange={setCustomQuestion4}
+              onSubmit={() => {
+                setQuestion4(customQuestion4.trim());
+                setCustomQuestion4('');
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {question1 && question2 && question3 && question4 && !result && (
         <div className="mx-auto max-w-xl pt-5">
           <ScanBackButton
             disabled={isLoading}
             onClick={() => {
-              setSenderScenario('');
-              setCustomSenderScenario('');
+              setQuestion4('');
+              setCustomQuestion4('');
               setMessage('');
             }}
           />
@@ -341,6 +399,24 @@ function ScanSection() {
       {result && !isLoading && (
         <div className="mx-auto max-w-xl pt-5">
           <div className="flex flex-col gap-3">
+            {result.flaggedLinks.length > 0 && (
+              <div className="rounded-2xl border border-red-500/20 bg-red-500/10">
+                <div className="border-b border-red-500/10 px-4 py-3">
+                  <h3 className="font-semibold text-red-400 md:text-xl">
+                    Google Safe Browsing обнаружил небезопасные ссылки
+                  </h3>
+                </div>
+
+                <div className="flex flex-col divide-y divide-red-500/10">
+                  {result.flaggedLinks.map((flaggedLink) => (
+                    <div key={flaggedLink} className="px-4 py-4">
+                      <p className="text-sm leading-relaxed break-all text-red-300 md:text-base">{flaggedLink}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {result.riskLevel && typeof result.riskPercentage === 'number' && (
               <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)] p-4">
                 <div className="flex flex-col gap-6">
@@ -400,6 +476,22 @@ function ScanSection() {
                       <p className="text-sm leading-relaxed sm:text-base">{result.fraudScheme.description}</p>
                     )}
                   </div>
+                </div>
+              </div>
+            )}
+
+            {result.psychologicalManipulations.length > 0 && (
+              <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
+                <div className="border-b border-[var(--main-color-10)] px-4 py-3">
+                  <h3 className="font-semibold md:text-xl">Психологические манипуляции</h3>
+                </div>
+
+                <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
+                  {result.psychologicalManipulations.map((manipulation) => (
+                    <div key={manipulation} className="px-4 py-4">
+                      <p className="text-sm leading-relaxed sm:text-base">{manipulation}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -469,8 +561,8 @@ function ScanSection() {
                         <p className="font-semibold">{scanSituationHistoryItem.result.riskLevel}</p>
 
                         <p className="max-w-[147px] pt-1 text-sm leading-relaxed text-[var(--main-color-60)] md:max-w-none">
-                          {scanSituationHistoryItem.channel} · {scanSituationHistoryItem.sender} ·{' '}
-                          {scanSituationHistoryItem.senderScenario}
+                          {scanSituationHistoryItem.question1} · {scanSituationHistoryItem.question2} ·{' '}
+                          {scanSituationHistoryItem.question3} · {scanSituationHistoryItem.question4}
                         </p>
                       </div>
 
@@ -490,6 +582,20 @@ function ScanSection() {
                                 <p className="text-sm leading-relaxed text-[var(--main-color-60)]">
                                   {scanSituationHistoryItem.message}
                                 </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {scanSituationHistoryItem.result.flaggedLinks.length > 0 && (
+                            <div>
+                              <p className="text-sm font-semibold">Небезопасные ссылки</p>
+
+                              <div className="flex flex-col gap-2 pt-2">
+                                {scanSituationHistoryItem.result.flaggedLinks.map((flaggedLink) => (
+                                  <p key={flaggedLink} className="text-sm leading-relaxed text-[var(--main-color-60)]">
+                                    {flaggedLink}
+                                  </p>
+                                ))}
                               </div>
                             </div>
                           )}
@@ -524,6 +630,23 @@ function ScanSection() {
                                     {scanSituationHistoryItem.result.fraudScheme.description}
                                   </p>
                                 )}
+                              </div>
+                            </div>
+                          )}
+
+                          {scanSituationHistoryItem.result.psychologicalManipulations.length > 0 && (
+                            <div>
+                              <p className="text-sm font-semibold">Психологические манипуляции</p>
+
+                              <div className="flex flex-col gap-2 pt-2">
+                                {scanSituationHistoryItem.result.psychologicalManipulations.map((manipulation) => (
+                                  <p
+                                    key={manipulation}
+                                    className="text-sm leading-relaxed text-[var(--main-color-60)]"
+                                  >
+                                    {manipulation}
+                                  </p>
+                                ))}
                               </div>
                             </div>
                           )}
