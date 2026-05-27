@@ -50,6 +50,22 @@ type ScanSituationHistoryItem = {
   createdAt: string;
 };
 
+function formatScanCheckDate(isoDate: string): string {
+  const date = new Date(isoDate);
+
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  return date.toLocaleString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 function ScanSection() {
   async function scanSituation(text: ScanSituationText, files: File[]): Promise<ScanSituationResult> {
     const formData = new FormData();
@@ -447,7 +463,7 @@ function ScanSection() {
             {result.warningSigns.length > 0 && (
               <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
                 <div className="border-b border-[var(--main-color-10)] px-4 py-3">
-                  <h3 className="font-semibold md:text-xl">Обнаруженные тревожные признаки</h3>
+                  <h3 className="font-semibold md:text-xl">Тревожные признаки</h3>
                 </div>
 
                 <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
@@ -560,6 +576,12 @@ function ScanSection() {
                       <div>
                         <p className="font-semibold">{scanSituationHistoryItem.result.riskLevel}</p>
 
+                        {scanSituationHistoryItem.createdAt && (
+                          <p className="pt-1 text-sm text-[var(--main-color-60)]">
+                            {formatScanCheckDate(scanSituationHistoryItem.createdAt)}
+                          </p>
+                        )}
+
                         <p className="max-w-[147px] pt-1 text-sm leading-relaxed text-[var(--main-color-60)] md:max-w-none">
                           {scanSituationHistoryItem.question1} · {scanSituationHistoryItem.question2} ·{' '}
                           {scanSituationHistoryItem.question3} · {scanSituationHistoryItem.question4}
@@ -602,7 +624,7 @@ function ScanSection() {
 
                           {scanSituationHistoryItem.result.warningSigns.length > 0 && (
                             <div>
-                              <p className="text-sm font-semibold">Обнаруженные тревожные признаки</p>
+                              <p className="text-sm font-semibold">Тревожные признаки</p>
 
                               <div className="flex flex-col gap-2 pt-2">
                                 {scanSituationHistoryItem.result.warningSigns.map((riskFactor) => (
@@ -640,10 +662,7 @@ function ScanSection() {
 
                               <div className="flex flex-col gap-2 pt-2">
                                 {scanSituationHistoryItem.result.psychologicalManipulations.map((manipulation) => (
-                                  <p
-                                    key={manipulation}
-                                    className="text-sm leading-relaxed text-[var(--main-color-60)]"
-                                  >
+                                  <p key={manipulation} className="text-sm leading-relaxed text-[var(--main-color-60)]">
                                     {manipulation}
                                   </p>
                                 ))}
