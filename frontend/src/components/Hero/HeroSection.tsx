@@ -1,5 +1,5 @@
 import HeroCard from './HeroCard';
-import { Shield, Brain, GitBranch, ShieldCheck, ListChecks, TriangleAlert } from 'lucide-react';
+import { Shield, Brain, Zap, Lock, Target, TriangleAlert } from 'lucide-react';
 
 function HeroSection() {
   return (
@@ -14,25 +14,10 @@ function HeroSection() {
       </p>
 
       <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 pt-5 md:grid-cols-4 md:gap-4">
-        <HeroCard
-          icon={<GitBranch className="h-5 w-5 md:h-8 md:w-8" />}
-          title="Адаптивный опрос"
-          description="Сбор контекста"
-        />
-
-        <HeroCard
-          icon={<ShieldCheck className="h-5 w-5 md:h-8 md:w-8" />}
-          title="URL-проверка"
-          description="Поиск угроз"
-        />
-
-        <HeroCard icon={<Brain className="h-5 w-5 md:h-8 md:w-8" />} title="AI-Анализ" description="Оценка риска" />
-
-        <HeroCard
-          icon={<ListChecks className="h-5 w-5 md:h-8 md:w-8" />}
-          title="Рекомендации"
-          description="Что делать"
-        />
+        <HeroCard icon={<Brain className="h-5 w-5 md:h-8 md:w-8" />} title="AI-Анализ" description="Умная система" />
+        <HeroCard icon={<Zap className="h-5 w-5 md:h-8 md:w-8" />} title="За 30 секунд" description="Быстро" />
+        <HeroCard icon={<Lock className="h-5 w-5 md:h-8 md:w-8" />} title="Без регистрации" description="Анонимно" />
+        <HeroCard icon={<Target className="h-5 w-5 md:h-8 md:w-8" />} title="Точность" description="Нейросеть" />
       </div>
 
       <div className="pt-5 text-center">
