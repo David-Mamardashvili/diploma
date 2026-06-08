@@ -50,6 +50,14 @@ type ScanSituationHistoryItem = {
   createdAt: string;
 };
 
+function nonEmptyStrings(items: string[]): string[] {
+  return items.filter((item) => item.trim());
+}
+
+function hasFraudSchemeContent(fraudScheme: ScanSituationResult['fraudScheme']): boolean {
+  return Boolean(fraudScheme.title.trim() || fraudScheme.description.trim());
+}
+
 function formatScanCheckDate(isoDate: string): string {
   const date = new Date(isoDate);
 
@@ -415,7 +423,7 @@ function ScanSection() {
       {result && !isLoading && (
         <div className="mx-auto max-w-xl pt-5">
           <div className="flex flex-col gap-3">
-            {result.flaggedLinks.length > 0 && (
+            {nonEmptyStrings(result.flaggedLinks).length > 0 && (
               <div className="rounded-2xl border border-red-500/20 bg-red-500/10">
                 <div className="border-b border-red-500/10 px-4 py-3">
                   <h3 className="font-semibold text-red-400 md:text-xl">
@@ -424,7 +432,7 @@ function ScanSection() {
                 </div>
 
                 <div className="flex flex-col divide-y divide-red-500/10">
-                  {result.flaggedLinks.map((flaggedLink) => (
+                  {nonEmptyStrings(result.flaggedLinks).map((flaggedLink) => (
                     <div key={flaggedLink} className="px-4 py-4">
                       <p className="text-sm leading-relaxed break-all text-red-300 md:text-base">{flaggedLink}</p>
                     </div>
@@ -460,14 +468,14 @@ function ScanSection() {
               </div>
             )}
 
-            {result.warningSigns.length > 0 && (
+            {nonEmptyStrings(result.warningSigns).length > 0 && (
               <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
                 <div className="border-b border-[var(--main-color-10)] px-4 py-3">
                   <h3 className="font-semibold md:text-xl">Тревожные признаки</h3>
                 </div>
 
                 <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
-                  {result.warningSigns.map((riskFactor) => (
+                  {nonEmptyStrings(result.warningSigns).map((riskFactor) => (
                     <div key={riskFactor} className="px-4 py-4">
                       <p className="text-sm leading-relaxed sm:text-base">{riskFactor}</p>
                     </div>
@@ -476,7 +484,7 @@ function ScanSection() {
               </div>
             )}
 
-            {result.fraudScheme && (
+            {hasFraudSchemeContent(result.fraudScheme) && (
               <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
                 <div className="border-b border-[var(--main-color-10)] px-4 py-3">
                   <h3 className="font-semibold md:text-xl">Возможная схема мошенничества</h3>
@@ -484,11 +492,11 @@ function ScanSection() {
 
                 <div className="px-4 py-4">
                   <div className="flex flex-col gap-3">
-                    {result.fraudScheme.title && (
+                    {result.fraudScheme.title.trim() && (
                       <h4 className="font-semibold sm:text-lg">{result.fraudScheme.title}</h4>
                     )}
 
-                    {result.fraudScheme.description && (
+                    {result.fraudScheme.description.trim() && (
                       <p className="text-sm leading-relaxed sm:text-base">{result.fraudScheme.description}</p>
                     )}
                   </div>
@@ -496,14 +504,14 @@ function ScanSection() {
               </div>
             )}
 
-            {result.psychologicalManipulations.length > 0 && (
+            {nonEmptyStrings(result.psychologicalManipulations).length > 0 && (
               <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
                 <div className="border-b border-[var(--main-color-10)] px-4 py-3">
                   <h3 className="font-semibold md:text-xl">Психологические манипуляции</h3>
                 </div>
 
                 <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
-                  {result.psychologicalManipulations.map((manipulation) => (
+                  {nonEmptyStrings(result.psychologicalManipulations).map((manipulation) => (
                     <div key={manipulation} className="px-4 py-4">
                       <p className="text-sm leading-relaxed sm:text-base">{manipulation}</p>
                     </div>
@@ -512,14 +520,14 @@ function ScanSection() {
               </div>
             )}
 
-            {result.recommendations.length > 0 && (
+            {nonEmptyStrings(result.recommendations).length > 0 && (
               <div className="rounded-2xl border border-[var(--main-color-20)] bg-[var(--element-background-color)]">
                 <div className="border-b border-[var(--main-color-10)] px-4 py-3">
                   <h3 className="font-semibold md:text-xl">Рекомендации</h3>
                 </div>
 
                 <div className="flex flex-col divide-y divide-[var(--main-color-10)]">
-                  {result.recommendations.map((recommendation, index) => (
+                  {nonEmptyStrings(result.recommendations).map((recommendation, index) => (
                     <div key={recommendation} className="px-4 py-4">
                       <p className="text-sm leading-relaxed sm:text-base">
                         {index + 1}. {recommendation}
@@ -596,7 +604,7 @@ function ScanSection() {
                         <div className="border-t border-[var(--main-color-10)]" />
 
                         <div className="flex flex-col gap-4 py-4">
-                          {scanSituationHistoryItem.message && (
+                          {scanSituationHistoryItem.message.trim() && (
                             <div>
                               <p className="text-sm font-semibold">Сообщение</p>
 
@@ -608,12 +616,12 @@ function ScanSection() {
                             </div>
                           )}
 
-                          {scanSituationHistoryItem.result.flaggedLinks.length > 0 && (
+                          {nonEmptyStrings(scanSituationHistoryItem.result.flaggedLinks).length > 0 && (
                             <div>
                               <p className="text-sm font-semibold">Небезопасные ссылки</p>
 
                               <div className="flex flex-col gap-2 pt-2">
-                                {scanSituationHistoryItem.result.flaggedLinks.map((flaggedLink) => (
+                                {nonEmptyStrings(scanSituationHistoryItem.result.flaggedLinks).map((flaggedLink) => (
                                   <p key={flaggedLink} className="text-sm leading-relaxed text-[var(--main-color-60)]">
                                     {flaggedLink}
                                   </p>
@@ -622,12 +630,12 @@ function ScanSection() {
                             </div>
                           )}
 
-                          {scanSituationHistoryItem.result.warningSigns.length > 0 && (
+                          {nonEmptyStrings(scanSituationHistoryItem.result.warningSigns).length > 0 && (
                             <div>
                               <p className="text-sm font-semibold">Тревожные признаки</p>
 
                               <div className="flex flex-col gap-2 pt-2">
-                                {scanSituationHistoryItem.result.warningSigns.map((riskFactor) => (
+                                {nonEmptyStrings(scanSituationHistoryItem.result.warningSigns).map((riskFactor) => (
                                   <p key={riskFactor} className="text-sm leading-relaxed text-[var(--main-color-60)]">
                                     {riskFactor}
                                   </p>
@@ -636,18 +644,18 @@ function ScanSection() {
                             </div>
                           )}
 
-                          {scanSituationHistoryItem.result.fraudScheme && (
+                          {hasFraudSchemeContent(scanSituationHistoryItem.result.fraudScheme) && (
                             <div>
                               <p className="text-sm font-semibold">Возможная схема мошенничества</p>
 
                               <div className="flex flex-col gap-2 pt-2">
-                                {scanSituationHistoryItem.result.fraudScheme.title && (
+                                {scanSituationHistoryItem.result.fraudScheme.title.trim() && (
                                   <p className="text-sm leading-relaxed text-[var(--main-color-60)]">
                                     {scanSituationHistoryItem.result.fraudScheme.title}
                                   </p>
                                 )}
 
-                                {scanSituationHistoryItem.result.fraudScheme.description && (
+                                {scanSituationHistoryItem.result.fraudScheme.description.trim() && (
                                   <p className="text-sm leading-relaxed text-[var(--main-color-60)]">
                                     {scanSituationHistoryItem.result.fraudScheme.description}
                                   </p>
@@ -656,12 +664,13 @@ function ScanSection() {
                             </div>
                           )}
 
-                          {scanSituationHistoryItem.result.psychologicalManipulations.length > 0 && (
+                          {nonEmptyStrings(scanSituationHistoryItem.result.psychologicalManipulations).length > 0 && (
                             <div>
                               <p className="text-sm font-semibold">Психологические манипуляции</p>
 
                               <div className="flex flex-col gap-2 pt-2">
-                                {scanSituationHistoryItem.result.psychologicalManipulations.map((manipulation) => (
+                                {nonEmptyStrings(scanSituationHistoryItem.result.psychologicalManipulations).map(
+                                  (manipulation) => (
                                   <p key={manipulation} className="text-sm leading-relaxed text-[var(--main-color-60)]">
                                     {manipulation}
                                   </p>
@@ -670,12 +679,13 @@ function ScanSection() {
                             </div>
                           )}
 
-                          {scanSituationHistoryItem.result.recommendations.length > 0 && (
+                          {nonEmptyStrings(scanSituationHistoryItem.result.recommendations).length > 0 && (
                             <div>
                               <p className="text-sm font-semibold">Рекомендации</p>
 
                               <div className="flex flex-col gap-2 pt-2">
-                                {scanSituationHistoryItem.result.recommendations.map((recommendation, index) => (
+                                {nonEmptyStrings(scanSituationHistoryItem.result.recommendations).map(
+                                  (recommendation, index) => (
                                   <p
                                     key={recommendation}
                                     className="text-sm leading-relaxed text-[var(--main-color-60)]"
